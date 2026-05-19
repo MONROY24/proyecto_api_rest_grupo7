@@ -6,10 +6,11 @@ mod config;
 mod repository;
 
 //cambiar por los controllers que tengas
-use controller::pais_controller::pais_router;
-use controller::persona_controller::persona_router;
+//use controller::pais_controller::pais_router;
+//use controller::persona_controller::persona_router;
 
 use config::config::crear_pool;
+use axum::Router;
 
 #[tokio::main]
 async fn main() {
@@ -30,9 +31,6 @@ async fn main() {
 }
 
 
-
-fn unificar_routers(pool: sqlx::PgPool) -> axum::Router {
-    let mut router1 = pais_router(pool.clone());
-    let router2 = persona_router(pool.clone());
-    router1.merge(router2)
+fn unificar_routers(_pool: sqlx::PgPool) -> axum::Router {
+    Router::new()
 }
