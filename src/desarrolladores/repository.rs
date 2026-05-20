@@ -7,7 +7,7 @@ pub async fn obtener_todos(
 ) -> Result<Vec<Desarrollador>, sqlx::Error> {
 
     sqlx::query_as::<_, Desarrollador>(
-        "SELECT * FROM desarrolladores ORDER BY id"
+        "SELECT * FROM Desarrolladores ORDER BY id_desarrollador"
     )
     .fetch_all(pool)
     .await
@@ -19,7 +19,7 @@ pub async fn obtener_por_id(
 ) -> Result<Option<Desarrollador>, sqlx::Error> {
 
     sqlx::query_as::<_, Desarrollador>(
-        "SELECT * FROM desarrolladores WHERE id = $1"
+        "SELECT * FROM Desarrolladores WHERE id_desarrollador = $1"
     )
     .bind(id)
     .fetch_optional(pool)
@@ -32,13 +32,13 @@ pub async fn crear(
 ) -> Result<Desarrollador, sqlx::Error> {
 
     sqlx::query_as::<_, Desarrollador>(
-        "INSERT INTO desarrolladores (nombre, lenguaje, experiencia)
+        "INSERT INTO Desarrolladores (nombre, rol_principal, nivel)
          VALUES ($1, $2, $3)
          RETURNING *"
     )
     .bind(data.nombre)
-    .bind(data.lenguaje)
-    .bind(data.experiencia)
+    .bind(data.rol_principal)
+    .bind(data.nivel)
     .fetch_one(pool)
     .await
 }
@@ -49,7 +49,7 @@ pub async fn eliminar(
 ) -> Result<u64, sqlx::Error> {
 
     let result = sqlx::query(
-        "DELETE FROM desarrolladores WHERE id = $1"
+        "DELETE FROM Desarrolladores WHERE id_desarrollador = $1"
     )
     .bind(id)
     .execute(pool)
