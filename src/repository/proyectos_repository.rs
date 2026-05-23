@@ -7,12 +7,9 @@ pub async fn obtener_proyectos(pool: &PgPool) -> Result<Vec<Proyecto>, sqlx::Err
         r#"
         SELECT 
             id_proyecto,
-            id_cliente,
             nombre_proyecto,
-            descripcion,
             fecha_inicio,
-            fecha_fin,
-            estado
+            id_cliente
         FROM Proyectos
         "#
     )
@@ -31,12 +28,9 @@ pub async fn obtener_proyecto_por_id(
         r#"
         SELECT 
             id_proyecto,
-            id_cliente,
             nombre_proyecto,
-            descripcion,
             fecha_inicio,
-            fecha_fin,
-            estado
+            id_cliente
         FROM Proyectos
         WHERE id_proyecto = $1
         "#,
@@ -55,31 +49,17 @@ pub async fn crear_proyecto(
     let nuevo_proyecto: Proyecto = sqlx::query_as!(
         Proyecto,
         r#"
-        INSERT INTO Proyectos
-        (
-            id_cliente,
-            nombre_proyecto,
-            descripcion,
-            fecha_inicio,
-            fecha_fin,
-            estado
-        )
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO Proyectos (nombre_proyecto, fecha_inicio, id_cliente)
+        VALUES ($1, $2, $3)
         RETURNING
             id_proyecto,
-            id_cliente,
             nombre_proyecto,
-            descripcion,
             fecha_inicio,
-            fecha_fin,
-            estado
+            id_cliente
         "#,
-        proyecto.id_cliente,
         proyecto.nombre_proyecto,
-        proyecto.descripcion,
         proyecto.fecha_inicio,
-        proyecto.fecha_fin,
-        proyecto.estado
+        proyecto.id_cliente
     )
     .fetch_one(pool)
     .await?;
