@@ -1,30 +1,18 @@
 use serde::{Deserialize, Serialize};
-use sqlx::FromRow;
-use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, FromRow)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tarea {
-    pub id: Uuid,
-    pub titulo: String,
-    pub descripcion: Option<String>,
-    pub estado: String,
-    pub prioridad: String,
-    pub proyecto_id: Uuid,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct CrearTarea {
-    pub titulo: String,
-    pub descripcion: Option<String>,
-    pub estado: String,
-    pub prioridad: String,
-    pub proyecto_id: Uuid,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct ActualizarTarea {
-    pub titulo: Option<String>,
-    pub descripcion: Option<String>,
-    pub estado: Option<String>,
+    pub id_tarea: Option<i32>,
+    pub id_proyecto: Option<i32>,
+    pub descripcion: String,
     pub prioridad: Option<String>,
+    pub estado: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CreateTarea {
+    pub id_proyecto: Option<i32>,
+    pub descripcion: String,
+    pub prioridad: Option<String>,
+    pub estado: Option<String>,
 }
