@@ -1,6 +1,9 @@
 use sqlx::PgPool;
 
-use super::model::{Desarrollador, NuevoDesarrollador};
+use crate::models::desarrolladores_model::{
+    Desarrollador,
+    NuevoDesarrollador,
+};
 
 pub async fn obtener_todos(
     pool: &PgPool,
