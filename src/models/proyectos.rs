@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use chrono::NaiveDate; // Necesitarás agregar 'chrono' a tu Cargo.toml si no está
+use chrono::NaiveDate;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Proyecto {
