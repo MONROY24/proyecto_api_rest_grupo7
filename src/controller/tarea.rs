@@ -1,21 +1,25 @@
 use axum::{
+
     extract::{Path, State},
     http::StatusCode,
     Json, Router,
     routing::get,
 };
-use sqlx::PgPool;
+use sqlx::PgPool;  
 
 use crate::models::tarea::{Tarea, CreateTarea};
 use crate::service::tarea as service;
 
 pub fn router() -> Router<PgPool> {
+
     Router::new()
         .route("/", get(obtener_todas).post(crear_tarea))
         .route("/{id}", get(obtener_por_id).put(actualizar_tarea).delete(eliminar_tarea))
 }
 
+
 async fn obtener_todas(State(pool): State<PgPool>) -> Result<Json<Vec<Tarea>>, StatusCode> {
+
     match service::obtener_tareas(&pool).await {
         Ok(tareas) => Ok(Json(tareas)),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
@@ -23,6 +27,7 @@ async fn obtener_todas(State(pool): State<PgPool>) -> Result<Json<Vec<Tarea>>, S
 }
 
 async fn crear_tarea(
+
     State(pool): State<PgPool>,
     Json(payload): Json<CreateTarea>,
 ) -> Result<(StatusCode, Json<Tarea>), StatusCode> {
@@ -31,8 +36,9 @@ async fn crear_tarea(
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
-
+       
 async fn obtener_por_id(
+
     State(pool): State<PgPool>,
     Path(id): Path<i32>,
 ) -> Result<Json<Tarea>, StatusCode> {
@@ -41,6 +47,7 @@ async fn obtener_por_id(
         Err(_) => Err(StatusCode::NOT_FOUND),
     }
 }
+
 
 async fn actualizar_tarea(
     State(pool): State<PgPool>,
