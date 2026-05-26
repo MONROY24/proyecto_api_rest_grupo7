@@ -1,12 +1,12 @@
 use axum::{
     extract::{Path, State},
     http::StatusCode,
-    Json, Router,
     routing::get,
+    Json, Router,
 };
 use sqlx::PgPool;
 
-use crate::models::proyectos::{Proyecto, CreateProyecto};
+use crate::models::proyectos::{CreateProyecto, Proyecto};
 use crate::service::proyectos_service as service;
 
 pub fn router() -> Router<PgPool> {
@@ -15,9 +15,11 @@ pub fn router() -> Router<PgPool> {
         .route("/{id}", get(obtener_por_id).put(actualizar_proyecto).delete(eliminar_proyecto))
 }
 
-async fn obtener_todos(State(pool): State<PgPool>) -> Result<Json<Vec<Proyecto>>, StatusCode> {
+async fn obtener_todos(
+    State(pool): State<PgPool>,
+) -> Result<Json<Vec<Proyecto>>, StatusCode> {
     match service::obtener_proyectos(&pool).await {
-        Ok(proyectos) => Ok(Json(proyectos)),
+        Ok(lista_proyectos) => Ok(Json(lista_proyectos)),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
