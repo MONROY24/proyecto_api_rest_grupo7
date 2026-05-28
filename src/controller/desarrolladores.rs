@@ -4,6 +4,7 @@ use axum::{
     Json, Router,
     routing::get,
 };
+
 use sqlx::PgPool;
 
 use crate::models::desarrolladores_model::{Desarrollador, NuevoDesarrollador};
@@ -12,10 +13,17 @@ use crate::service::desarrolladores_service as service;
 pub fn router() -> Router<PgPool> {
     Router::new()
         .route("/", get(obtener_todos).post(crear_desarrollador))
-        .route("/{id}", get(obtener_por_id).delete(eliminar_desarrollador))
+        .route(
+            "/{id}",
+            get(obtener_por_id)
+                .put(actualizar_desarrollador)
+                .delete(eliminar_desarrollador),
+        )
 }
 
-async fn obtener_todos(State(pool): State<PgPool>) -> Result<Json<Vec<Desarrollador>>, StatusCode> {
+async fn obtener_todos(
+    State(pool): State<PgPool>,
+) -> Result<Json<Vec<Desarrollador>>, StatusCode> {
     match service::listar_desarrolladores(&pool).await {
         Ok(desarrolladores) => Ok(Json(desarrolladores)),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
@@ -37,8 +45,20 @@ async fn obtener_por_id(
     Path(id): Path<i32>,
 ) -> Result<Json<Desarrollador>, StatusCode> {
     match service::buscar_desarrollador(&pool, id).await {
-        Ok(Some(dev)) => Ok(Json(dev)), // Extraemos el valor del Option
-        Ok(None) => Err(StatusCode::NOT_FOUND), // Si es None, devolvemos 404
+        Ok(Some(dev)) => Ok(Json(dev)),
+        Ok(None) => Err(StatusCode::NOT_FOUND),
+        Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
+    }
+}
+
+async fn actualizar_desarrollador(
+    State(pool): State<PgPool>,
+    Path(id): Path<i32>,
+    Json(payload): Json<NuevoDesarrollador>,
+) -> Result<Json<Desarrollador>, StatusCode> {
+    match service::actualizar_desarrollador(&pool, id, payload).await {
+        Ok(Some(dev)) => Ok(Json(dev)),
+        Ok(None) => Err(StatusCode::NOT_FOUND),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }

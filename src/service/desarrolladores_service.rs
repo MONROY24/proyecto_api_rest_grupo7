@@ -30,6 +30,15 @@ pub async fn crear_desarrollador(
     desarrolladores_repository::crear(pool, data).await
 }
 
+pub async fn actualizar_desarrollador(
+    pool: &PgPool,
+    id: i32,
+    data: NuevoDesarrollador,
+) -> Result<Option<Desarrollador>, sqlx::Error> {
+
+    desarrolladores_repository::actualizar(pool, id, data).await
+}
+
 pub async fn eliminar_desarrollador(
     pool: &PgPool,
     id: i32,

@@ -46,6 +46,26 @@ pub async fn crear(
     .await
 }
 
+pub async fn actualizar(
+    pool: &PgPool,
+    id: i32,
+    data: NuevoDesarrollador,
+) -> Result<Option<Desarrollador>, sqlx::Error> {
+
+    sqlx::query_as::<_, Desarrollador>(
+        "UPDATE Desarrolladores
+         SET nombre = $1, rol_principal = $2, nivel = $3
+         WHERE id_desarrollador = $4
+         RETURNING *"
+    )
+    .bind(data.nombre)
+    .bind(data.rol_principal)
+    .bind(data.nivel)
+    .bind(id)
+    .fetch_optional(pool)
+    .await
+}
+
 pub async fn eliminar(
     pool: &PgPool,
     id: i32,
