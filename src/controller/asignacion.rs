@@ -63,13 +63,14 @@ async fn actualizar_asignacion(
 }
 
 /// Elimina una asignación de la base de datos por su ID.
-/// Retorna 204 No Content si se eliminó correctamente.
+/// Retorna 204 No Content si se eliminó, 404 Not Found si no existe.
 async fn eliminar_asignacion(
     State(pool): State<PgPool>,
     Path(id): Path<i32>,
 ) -> Result<StatusCode, StatusCode> {
     match service::eliminar_asignacion_service(&pool, id).await {
-        Ok(_) => Ok(StatusCode::NO_CONTENT),
+        Ok(filas) if filas > 0 => Ok(StatusCode::NO_CONTENT),
+        Ok(_) => Err(StatusCode::NOT_FOUND),
         Err(_) => Err(StatusCode::INTERNAL_SERVER_ERROR),
     }
 }
